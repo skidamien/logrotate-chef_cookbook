@@ -1,0 +1,39 @@
+#############################################################
+#                                                           #
+# Managed by Chef                                           #
+#                                                           #
+# any manual edits made will be lost on the next Chef run   #
+#                                                           #
+#############################################################
+
+
+/var/log/syslog
+/var/log/mail.info
+/var/log/mail.warn
+/var/log/mail.err
+/var/log/mail.log
+/var/log/daemon.log
+/var/log/kern.log
+/var/log/auth.log
+/var/log/user.log
+/var/log/lpr.log
+/var/log/cron.log
+/var/log/debug
+/var/log/messages
+{
+	daily
+	rotate 15
+	dateext
+  	dateformat .%Y-%m-%d
+	missingok
+	notifempty
+	delaycompress
+	compress
+	postrotate
+		reload rsyslog >/dev/null 2>&1 || true
+		find /var/log/ -name "*.gz" -mtime +7 -exec mv {} /var/log/log_ship_queue_to_s3 \;
+		chmod -R 666 /var/log/log_ship_queue_to_s3/
+	endscript
+}
+
+

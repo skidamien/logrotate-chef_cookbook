@@ -1,0 +1,23 @@
+#############################################################
+#                                                           #
+# Managed by Chef                                           #
+#                                                           #
+# any manual edits made will be lost on the next Chef run   #
+#                                                           #
+#############################################################
+
+/var/log/upstart/*.log {
+	daily
+	rotate 15
+	dateext
+  	dateformat .%Y-%m-%d
+	missingok
+	ifempty
+	nodelaycompress
+	compress
+	nocreate
+	postrotate
+		find /var/log/upstart/ -name "*.log.*.gz" -mtime +7 -exec mv {} /var/log/log_ship_queue_to_s3 \;
+		chmod -R 666 /var/log/log_ship_queue_to_s3/
+	endscript
+}

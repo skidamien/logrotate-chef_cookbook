@@ -1,0 +1,24 @@
+#############################################################
+#                                                           #
+# Managed by Chef                                           #
+#                                                           #
+# any manual edits made will be lost on the next Chef run   #
+#                                                           #
+#############################################################
+
+
+"/var/log/nginx/*.log" {
+  daily
+  rotate 15
+  dateext
+  dateformat .%Y-%m-%d
+  copytruncate
+  missingok
+  compress
+  notifempty
+  postrotate
+	find /var/log/nginx/ -name "*.log.*.gz" -mtime +7 -exec mv {} /var/log/log_ship_queue_to_s3 \;
+	chmod -R 666 /var/log/log_ship_queue_to_s3/
+  endscript
+}
+
